@@ -75,7 +75,11 @@ export class Langfuse implements INodeType {
     const prompt = await langfuse.getPrompt(promptName, undefined, { label: 'production' });
     const compiledChatPrompt = prompt.compile(variables);
 
-    returnData.push({ json: { compiledChatPrompt } });
+    const executionData = this.helpers.constructExecutionMetaData(
+      this.helpers.returnJsonArray([{ json: { compiledChatPrompt } }] as IDataObject[]),
+      { itemData: { item: 1 } },
+    );
+    returnData.push(...executionData);
 
     return [returnData as INodeExecutionData[]];
   };
