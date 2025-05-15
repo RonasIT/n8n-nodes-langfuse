@@ -1,0 +1,7 @@
+{
+  "name": "N8N Nodes Langfuse",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers-extra/features/n8n:1": {}
+  }
+}
