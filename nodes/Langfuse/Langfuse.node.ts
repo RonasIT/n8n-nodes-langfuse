@@ -33,14 +33,20 @@ export class Langfuse implements INodeType {
      */
     properties: [
       {
-        displayName: 'Name', // The value the user sees in the UI
+        displayName: 'Prompt Name', // The value the user sees in the UI
         name: 'name', // The name used to reference the element UI within the code
         type: 'string',
         required: true, // Whether the field is required or not
         default: '',
-        description: 'The name of the prompt'
-      }
-      // Optional/additional fields will go here
+        description: 'The name of the prompt to be used in the request',
+      },
+      {
+        displayName: 'Variables',
+        name: 'variables',
+        type: 'assignmentCollection',
+        default: {},
+        description: 'The variables to be used in the prompt',
+      },
     ],
   };
 }
