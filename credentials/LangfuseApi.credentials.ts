@@ -3,6 +3,7 @@ import {
   INodeProperties,
 } from 'n8n-workflow';
 
+
 export class LangfuseApi implements ICredentialType {
   name = 'langfuseApi';
   displayName = 'Langfuse API';
