@@ -1,6 +1,6 @@
 {
   "name": "@ronas-it/n8n-nodes-langfuse",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "keywords": [
     "n8n-community-node-package"
