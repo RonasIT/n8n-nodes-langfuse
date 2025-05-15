@@ -1,7 +1,7 @@
 {
   "name": "@ronas-it/n8n-nodes-langfuse",
   "version": "2.0.0",
-  "description": "",
+  "description": "This is a community node package for n8n that provides integration with Langfuse.",
   "keywords": [
     "n8n-community-node-package"
   ],
@@ -25,7 +25,7 @@
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
     "lintfix": "eslint nodes credentials package.json --fix",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
   },
   "files": [
     "dist"
