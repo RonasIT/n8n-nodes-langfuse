@@ -54,10 +54,14 @@ export class Langfuse implements INodeType {
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const promptName = this.getNodeParameter('name', 0) as string;
     const variablesRaw = this.getNodeParameter('variables', 0) as Record<string, { name: string, value: string }[]>;
-    const variables = variablesRaw?.assignments.reduce((accumulator, item) => {
-      accumulator[item.name] = item.value;
-      return accumulator;
-    }, {} as Record<string, string>);
+
+    let variables = {};
+    if (variablesRaw?.assignments?.length) {
+      variables = variablesRaw?.assignments.reduce((accumulator, item) => {
+        accumulator[item.name] = item.value;
+        return accumulator;
+      }, {} as Record<string, string>);
+    }
     const credentials = await this.getCredentials('langfuseApi', 0);
     const returnData: IDataObject[] = [];
 
