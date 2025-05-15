@@ -8,7 +8,7 @@ export class Langfuse implements INodeType {
     icon: 'file:langfuse.svg',
     group: ['transform'],
     version: 1,
-    subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+    subtitle: '={{$parameter["name"]}}',
     description: 'Interact with Langfuse',
     defaults: {
       name: 'Langfuse',
