@@ -65,7 +65,6 @@ export class Langfuse implements INodeType {
     const credentials = await this.getCredentials('langfuseApi', 0);
     const returnData: IDataObject[] = [];
 
-
     const langfuse = new LangfuseSDK({
       secretKey: credentials.sk as string,
       publicKey: credentials.pk as string,
