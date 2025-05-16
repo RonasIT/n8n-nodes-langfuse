@@ -1,6 +1,9 @@
 {
   "name": "N8N Nodes Langfuse",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "mounts": [
+    "source=${localEnv:HOME}/.npmrc,target=/home/node/.npmrc,type=bind,consistency=cached"
+  ],
   "features": {
     "ghcr.io/devcontainers-extra/features/n8n:1": {}
   }
