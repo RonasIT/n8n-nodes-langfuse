@@ -1,6 +1,6 @@
 {
   "name": "@ronas-it/n8n-nodes-langfuse",
-  "version": "3.0.2",
+  "version": "4.0.0",
   "description": "This is a community node package for n8n that provides integration with Langfuse.",
   "keywords": [
     "n8n-community-node-package"
