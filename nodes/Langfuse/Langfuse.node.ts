@@ -86,29 +86,32 @@ export class Langfuse implements INodeType {
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-    const promptName = this.getNodeParameter('name', 0) as string;
-    const variablesRaw = this.getNodeParameter('variables', 0) as Record<string, { name: string, value: string }[]>;
-
-    let variables = {};
-    if (variablesRaw?.assignments?.length) {
-      variables = variablesRaw?.assignments.reduce((accumulator, item) => {
-        accumulator[item.name] = item.value;
-        return accumulator;
-      }, {} as Record<string, string>);
-    }
-
+    const items = this.getInputData();
     const returnData: IDataObject[] = [];
 
-    const langfuse = await getLangfuse.call(this);
+    for (let i = 0; i < items.length; i++) {
+      const promptName = this.getNodeParameter('name', i) as string;
+      const variablesRaw = this.getNodeParameter('variables', i) as Record<string, { name: string, value: string }[]>;
 
-    const prompt = await langfuse.getPrompt(promptName, undefined, { label: 'production' });
-    const compiledChatPrompt = prompt.compile(variables);
+      let variables = {};
+      if (variablesRaw?.assignments?.length) {
+        variables = variablesRaw?.assignments.reduce((accumulator, item) => {
+          accumulator[item.name] = item.value;
+          return accumulator;
+        }, {} as Record<string, string>);
+      }
 
-    const executionData = this.helpers.constructExecutionMetaData(
-      this.helpers.returnJsonArray([{ json: compiledChatPrompt }] as IDataObject[]),
-      { itemData: { item: 1 } },
-    );
-    returnData.push(...executionData);
+      const langfuse = await getLangfuse.call(this);
+
+      const prompt = await langfuse.getPrompt(promptName, undefined, { label: 'production' });
+      const compiledChatPrompt = prompt.compile(variables);
+
+      const executionData = this.helpers.constructExecutionMetaData(
+        this.helpers.returnJsonArray([{ json: compiledChatPrompt }] as IDataObject[]),
+        { itemData: { item: i } },
+      );
+      returnData.push(...executionData);
+    }
 
     return [returnData as INodeExecutionData[]];
   };
