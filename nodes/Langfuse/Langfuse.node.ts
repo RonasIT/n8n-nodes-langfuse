@@ -1,5 +1,6 @@
-import { IDataObject, IExecuteFunctions, INodeExecutionData, INodeType, INodeTypeDescription, NodeConnectionType } from 'n8n-workflow';
-import { Langfuse as LangfuseSDK } from 'langfuse';
+import { IDataObject, IExecuteFunctions, ILoadOptionsFunctions, INodeExecutionData, INodePropertyOptions, INodeType, INodeTypeDescription, NodeConnectionType } from 'n8n-workflow';
+import { ApiPromptMeta, ApiPromptsListParams } from 'langfuse';
+import { getLangfuse } from './GenericFunctions';
 
 export class Langfuse implements INodeType {
   description: INodeTypeDescription = {
@@ -34,12 +35,15 @@ export class Langfuse implements INodeType {
      */
     properties: [
       {
-        displayName: 'Prompt Name', // The value the user sees in the UI
+        displayName: 'Prompt Name or ID', // The value the user sees in the UI
         name: 'name', // The name used to reference the element UI within the code
-        type: 'string',
+        type: 'options',
         required: true, // Whether the field is required or not
         default: '',
-        description: 'The name of the prompt to be used in the request',
+        description: 'The name of the prompt to be used in the request. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+        typeOptions: {
+          loadOptionsMethod: 'getPrompts'
+        }
       },
       {
         displayName: 'Variables',
@@ -49,8 +53,38 @@ export class Langfuse implements INodeType {
         description: 'The variables to be used in the prompt',
       },
     ],
-
   };
+
+  methods = {
+    loadOptions: {
+      async getPrompts(
+        this: ILoadOptionsFunctions,
+      ): Promise<INodePropertyOptions[]> {
+        const langfuse = await getLangfuse.call(this);
+
+        let allPrompts: ApiPromptMeta[] = [];
+        let currentPage = 1;
+        let totalPages = 1;
+
+        do {
+          const currentApiParams: ApiPromptsListParams = {
+            limit: 50,
+            page: currentPage,
+          };
+
+          const response = await langfuse.api.promptsList(currentApiParams);
+
+          allPrompts = allPrompts.concat(response.data);
+
+          totalPages = response.meta.totalPages;
+          currentPage++;
+        } while (currentPage <= totalPages);
+
+        return allPrompts.map((item) => ({ name: item.name, value: item.name }));
+      },
+    },
+  };
+
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const promptName = this.getNodeParameter('name', 0) as string;
     const variablesRaw = this.getNodeParameter('variables', 0) as Record<string, { name: string, value: string }[]>;
@@ -62,14 +96,10 @@ export class Langfuse implements INodeType {
         return accumulator;
       }, {} as Record<string, string>);
     }
-    const credentials = await this.getCredentials('langfuseApi', 0);
+
     const returnData: IDataObject[] = [];
 
-    const langfuse = new LangfuseSDK({
-      secretKey: credentials.sk as string,
-      publicKey: credentials.pk as string,
-      baseUrl: 'https://cloud.langfuse.com'
-    });
+    const langfuse = await getLangfuse.call(this);
 
     const prompt = await langfuse.getPrompt(promptName, undefined, { label: 'production' });
     const compiledChatPrompt = prompt.compile(variables);
