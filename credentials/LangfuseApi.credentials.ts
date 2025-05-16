@@ -1,5 +1,9 @@
 import {
+  IAuthenticateGeneric,
+  ICredentialDataDecryptedObject,
+  ICredentialTestRequest,
   ICredentialType,
+  IHttpRequestOptions,
   INodeProperties,
 } from 'n8n-workflow';
 
@@ -30,4 +34,25 @@ export class LangfuseApi implements ICredentialType {
       default: '',
     },
   ];
+
+  async authenticate(
+    credentials: ICredentialDataDecryptedObject,
+    requestOptions: IHttpRequestOptions,
+  ): Promise<IHttpRequestOptions> {
+    const token = Buffer.from(`${credentials.pk}:${credentials.sk}`).toString('base64');
+
+    requestOptions.headers = {
+      ...requestOptions.headers,
+      Authorization: `Basic ${token}`,
+    };
+
+    return requestOptions;
+  }
+
+  test: ICredentialTestRequest = {
+    request: {
+      baseURL: '={{$credentials.url}}',
+      url: '/api/public/v2/prompts'
+    }
+  }
 }
