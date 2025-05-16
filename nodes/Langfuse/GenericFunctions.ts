@@ -9,6 +9,6 @@ export async function getLangfuse(
   return new LangfuseSDK({
     secretKey: credentials.sk as string,
     publicKey: credentials.pk as string,
-    baseUrl: 'https://cloud.langfuse.com'
+    baseUrl: credentials.url as string
   });
 }
