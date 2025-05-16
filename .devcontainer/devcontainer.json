@@ -6,5 +6,9 @@
   ],
   "features": {
     "ghcr.io/devcontainers-extra/features/n8n:1": {}
+  },
+  "containerEnv": {
+    "N8N_USER_FOLDER": "${containerWorkspaceFolder}/n8n-data",
+    "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS": "true"
   }
 }
