@@ -105,7 +105,7 @@ export class Langfuse implements INodeType {
     const compiledChatPrompt = prompt.compile(variables);
 
     const executionData = this.helpers.constructExecutionMetaData(
-      this.helpers.returnJsonArray([{ json: { compiledChatPrompt } }] as IDataObject[]),
+      this.helpers.returnJsonArray([{ json: compiledChatPrompt }] as IDataObject[]),
       { itemData: { item: 1 } },
     );
     returnData.push(...executionData);
